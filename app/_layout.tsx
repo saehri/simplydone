@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SQLiteProvider } from 'expo-sqlite';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,28 +25,35 @@ export default function RootLayout() {
 	}
 
 	return (
-		<SafeAreaProvider>
-			<Stack>
-				<Stack.Screen
-					name="index"
-					options={{
-						headerShown: false,
-					}}
-				/>
-				<Stack.Screen
-					name="about"
-					options={{
-						title: 'About',
-					}}
-				/>
-				<Stack.Screen
-					name="archive"
-					options={{
-						title: 'Archive',
-					}}
-				/>
-				<Stack.Screen name="+not-found" />
-			</Stack>
-		</SafeAreaProvider>
+		<SQLiteProvider
+			databaseName="database.db"
+			assetSource={{ assetId: require('../assets/database.db') }}
+		>
+			<SafeAreaProvider>
+				<Stack>
+					<Stack.Screen
+						name="index"
+						options={{
+							headerShown: false,
+						}}
+					/>
+					<Stack.Screen
+						name="about"
+						options={{
+							title: 'About',
+							animation: 'ios_from_left',
+						}}
+					/>
+					<Stack.Screen
+						name="archive"
+						options={{
+							title: 'Archive',
+							animation: 'ios_from_right',
+						}}
+					/>
+					<Stack.Screen name="+not-found" />
+				</Stack>
+			</SafeAreaProvider>
+		</SQLiteProvider>
 	);
 }
