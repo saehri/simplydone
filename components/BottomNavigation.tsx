@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import { Link } from 'expo-router';
+import CreateTaskModal from './CreateTaskModal';
 
 export default function BottomNavigation() {
 	return (
@@ -19,9 +20,7 @@ export default function BottomNavigation() {
 				</View>
 			</Link>
 
-			<Pressable style={styles.buttonContainer}>
-				<Feather name="plus" size={20} />
-			</Pressable>
+			<CreateTaskModal />
 
 			<Link href="/archive">
 				<View style={styles.buttonContainer}>
