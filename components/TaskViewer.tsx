@@ -1,7 +1,8 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
-import { useSQLiteContext } from 'expo-sqlite';
-import { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { CalendarClock, CalendarDays } from 'lucide-react-native';
+
+import useTodoStore from '@/storage/useTodoStorage';
+
 import TaskCard from './TaskCard';
 
 type Props = {
@@ -10,49 +11,54 @@ type Props = {
 };
 
 export default function TaskViewer({ label, priority }: Props) {
-	const db = useSQLiteContext();
-	const [todos, setTodos] = useState<Todo[]>([]);
-
-	useEffect(() => {
-		async function setup() {
-			const results = await db.getAllAsync(
-				`SELECT * FROM todos WHERE priority = "${priority}" AND status = "uncompleted"`
-			);
-			setTodos(results as Todo[]);
-		}
-
-		setup();
-	}, []);
+	const todos = useTodoStore() as any;
+	const todoData = todos.todos.filter(
+		(todo: Todo) => todo.priority === priority
+	);
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.headerContainer}>
 				<View style={styles.headerTitleContainer}>
-					<Feather name="calendar" size={20} color="#111" />
+					{priority === 'sooner' ? (
+						<CalendarClock size={20} color="#111" />
+					) : (
+						<CalendarDays size={20} color="#111" />
+					)}
 					<Text style={styles.headerTitle}>{label}</Text>
 				</View>
 
 				<View style={styles.taskCounterContainer}>
-					<Text style={styles.taskCounterText}>{todos.length}</Text>
+					<Text style={styles.taskCounterText}>{todoData.length}</Text>
 				</View>
 			</View>
 
-			{todos.length ? (
-				<ScrollView
-					showsVerticalScrollIndicator={false}
-					style={{ backgroundColor: '#eaeaea', borderRadius: 28 }}
-				>
-					<View style={{ padding: 8, gap: 4 }}>
-						{todos.map((todo) => (
-							<TaskCard key={todo.id} {...todo} />
-						))}
+			<FlatList
+				data={todoData}
+				ListEmptyComponent={() => (
+					<View style={styles.notaskCardContainer}>
+						<Text style={styles.notaskCardText}>Nothing to do.</Text>
 					</View>
-				</ScrollView>
-			) : (
-				<View style={styles.notaskCardContiainer}>
-					<Text style={styles.notaskCardText}>Nothing to do.</Text>
-				</View>
-			)}
+				)}
+				renderItem={({ item }) => (
+					<TaskCard
+						id={item.id}
+						priority={item.priority as any}
+						status={item.status as any}
+						title={item.title}
+						toggleTodo={todos.toggleTodo}
+						moveCategory={todos.moveCategory}
+					/>
+				)}
+				style={{
+					backgroundColor: '#eaeaea',
+					borderRadius: 28,
+					padding: 12,
+				}}
+				contentContainerStyle={{
+					gap: 6,
+				}}
+			/>
 		</View>
 	);
 }
@@ -91,8 +97,7 @@ const styles = StyleSheet.create({
 		fontFamily: 'Nunito-SemiBold',
 		color: '#111',
 	},
-	notaskCardContiainer: {
-		backgroundColor: '#eaeaea',
+	notaskCardContainer: {
 		borderRadius: 28,
 		flex: 1,
 		alignItems: 'center',

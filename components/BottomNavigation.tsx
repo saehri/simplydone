@@ -1,6 +1,7 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
 import { Link } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { Cog, ListTodo } from 'lucide-react-native';
+
 import CreateTaskModal from './CreateTaskModal';
 
 export default function BottomNavigation() {
@@ -16,7 +17,7 @@ export default function BottomNavigation() {
 		>
 			<Link href="/about">
 				<View style={styles.buttonContainer}>
-					<Feather name="settings" size={20} />
+					<Cog color="#111" size={20} />
 				</View>
 			</Link>
 
@@ -24,7 +25,7 @@ export default function BottomNavigation() {
 
 			<Link href="/archive">
 				<View style={styles.buttonContainer}>
-					<Feather name="archive" size={20} />
+					<ListTodo color="#111" size={20} />
 				</View>
 			</Link>
 		</View>
